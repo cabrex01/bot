@@ -52,10 +52,10 @@ class GeneralCog(commands.Cog):
         general_embed = discord.Embed(
                 title = 'Bot commands for @Rexbot',
                 description='**8ball**\nUses AI to give you the best answers to your questions\nUsage: $8ball {question}\n\n'
-                            '**avatar** | **av**\nShows the avatar of the user entered\nUsage: $avatar | $av {member_name | member_tag | member_id}\nIf nothing is provided then it shows your avatar\n\n'
-                            '**userinfo**\nGives the info of the entered user\nUsage: $userinfo {member_name | member_tag | member_id}\n\n'
+                            '**avatar** | **av**\nShows the avatar of the user mentioned\nUsage: $avatar | $av {member_name | member_tag | member_id}\nIf nothing is provided then it shows your avatar\n\n'
+                            '**userinfo**\nGives the info of the mentioned user\nUsage: $userinfo {member_name | member_tag | member_id}\n\n'
                             '**serverinfo**\nGives the info of the server(No Arguments required)\n\n'
-                            '**meme**\nSends you a beautiful meme\n\n'
+                            '**meme**\nSends you a beautifully crafted meme\n\n'
                             '**dog | doggo | pupper**\nGets you a dog picture\n\n'
                             '**cat | kitty**\nGets you a cat picture',
                 colour=0x01a901
@@ -227,7 +227,8 @@ class GeneralCog(commands.Cog):
         embed.set_footer(text='made by CABREX with ❤')
 
         embed.add_field(name='ID:', value=multiple_member_array[0].id)
-        embed.add_field(name='\nMember Name:', value=multiple_member_array[0].display_name)
+        embed.add_field(name='\nMember Name:', value=multiple_member_array[0])
+        embed.add_field(name='\nMember Nickname:', value=multiple_member_array[0].display_name)
 
         embed.add_field(name='\nCreated at: ', value=multiple_member_array[0].created_at.strftime('%a, %#d %B %Y, %I:%M %p UTC'))
         embed.add_field(name='\nJoined at:', value=multiple_member_array[0].joined_at.strftime('%a, %#d %B %Y, %I:%M %p UTC'))
