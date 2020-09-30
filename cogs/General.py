@@ -14,7 +14,7 @@ class GeneralCog(commands.Cog):
     # the eight ball
 
     @commands.command(aliases=['8ball'])
-    @cooldown(1,3,BucketType.channel)
+    @cooldown(1,5,BucketType.channel)
     async def eight_ball(self, ctx, *, question):
         responses = ["It is certain.",
                      "It is decidedly so.",
@@ -41,10 +41,19 @@ class GeneralCog(commands.Cog):
         embed = discord.Embed(title='*The 8ball*', description=f'**{ctx.message.author}** asked a question.\n\nThe question was: **{question}**\n\n\n{random.choice(responses)}', colour=0x0000ff)
         await ctx.send(embed=embed)
 
+
+    # eightball: Error handling
+
+    @eight_ball.error
+    async def eightball_error(self, ctx, error):
+      if isinstance(error, commands.cooldown):
+        await ctx.send(error)
+        
+
     # Help console
 
     @commands.command()
-    @cooldown(1,3,BucketType.channel)
+    @cooldown(1,5,BucketType.channel)
     async def help(self, ctx, argument=None):
         mod_role = discord.utils.get(ctx.author.roles, name='Moderator')
         admin_role = discord.utils.get(ctx.author.roles, name='Administrator')
@@ -91,6 +100,14 @@ class GeneralCog(commands.Cog):
           await ctx.send(embed=mod_embed)
         else:
           pass
+
+
+    # Help console: Error handling
+
+    @help.error
+    async def help_error(self, ctx, error):
+      if isinstance(error, commands.cooldown):
+        await ctx.send(error)
 
 
     # Avatar fetcher
@@ -174,14 +191,16 @@ class GeneralCog(commands.Cog):
         embed = discord.Embed(colour=0x0000ff)
         embed.set_image(url=f'{ctx.author.avatar_url}')
         await ctx.send(embed=embed)
+      elif isinstance(error, commands.cooldown):
+        await ctx.send(error)
       else:
-        await ctx.send(f'{error}')
+        await ctx.send(error)
 
 
     # Userinfo
 
     @commands.command()
-    @cooldown(1,3,BucketType.channel)
+    @cooldown(1,5,BucketType.channel)
     async def userinfo(self, ctx, member):
 
       if member[0] == '<' and member[1] == '@':
@@ -267,6 +286,8 @@ class GeneralCog(commands.Cog):
     async def userinfo_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
           await ctx.send('```\n$userinfo {member_name}\n          ^^^^^^^^^^^^^\nMissing Required Argument member_name\n```')
+        elif isinstance(error, commands.cooldown):
+          await ctx.send(error)
         else:
           await ctx.send(f'**{error}**')
 
@@ -312,6 +333,14 @@ class GeneralCog(commands.Cog):
           await ctx.send(f'{e}')
 
 
+    # Serverinfo: Error handling
+
+    @serverinfo.error
+    async def serverinfo_error(self, ctx, error):
+      if isinstance(error, commands.cooldown):
+        await ctx.send(error)
+
+
     # Memes
 
     @commands.command(aliases=['Meme'])
@@ -342,6 +371,15 @@ class GeneralCog(commands.Cog):
           else:
             await ctx.send(f"The API seems down, says {response.status}")
 
+
+    # Memes: Error handling
+
+    @meme.error
+    async def meme_error(self, ctx, error):
+      if isinstance(error, commands.cooldown):
+        await ctx.send(error)
+
+
     # Dog pictures
 
     @commands.command(aliases=['doggo','pupper'])
@@ -365,6 +403,14 @@ class GeneralCog(commands.Cog):
           await ctx.send(f"The API seems down, says {response.status}")
 
 
+    # Dog pictures: Error handling
+
+    @dog.error
+    async def dog_error(self, ctx, error):
+      if isinstance(error, commands.cooldown):
+        await ctx.send(error)
+
+
     # Cat pictures
 
     @commands.command(aliases=['Cat'])
@@ -386,6 +432,13 @@ class GeneralCog(commands.Cog):
 
         else:
           await ctx.send(f'The API seems down, says {response.status}')
+
+
+    # Cat pictures: Error handling
+
+    @cat.error
+    async def cat_picture_error(self, ctx, error):
+      await ctx.send(error)
 
 
 
