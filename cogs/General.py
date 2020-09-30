@@ -127,11 +127,12 @@ class GeneralCog(commands.Cog):
               multiple_member_array.append(members_list)
             else:
               pass
-        if not member.isnumeric():
-          if member.lower() == 'me' and override == 'override':
-            embed = discord.Embed(colour=0x0000ff)
-            embed.set_image(url=f'{ctx.author.avatar_url}')
-            await ctx.send(embed=embed)
+
+
+        if member.isnumeric() and member.lower() == 'me' and override == 'override':
+          embed = discord.Embed(colour=0x0000ff)
+          embed.set_image(url=f'{ctx.author.avatar_url}')
+          await ctx.send(embed=embed)
 
         elif len(multiple_member_array) == 1:
 
