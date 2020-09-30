@@ -46,9 +46,9 @@ class GeneralCog(commands.Cog):
 
     @eight_ball.error
     async def eightball_error(self, ctx, error):
-      if isinstance(error, commands.cooldown):
+      if isinstance(error, commands.CommandOnCooldown):
         await ctx.send(error)
-        
+
 
     # Help console
 
@@ -106,7 +106,7 @@ class GeneralCog(commands.Cog):
 
     @help.error
     async def help_error(self, ctx, error):
-      if isinstance(error, commands.cooldown):
+      if isinstance(error, commands.CommandOnCooldown):
         await ctx.send(error)
 
 
@@ -191,7 +191,7 @@ class GeneralCog(commands.Cog):
         embed = discord.Embed(colour=0x0000ff)
         embed.set_image(url=f'{ctx.author.avatar_url}')
         await ctx.send(embed=embed)
-      elif isinstance(error, commands.cooldown):
+      elif isinstance(error, commands.CommandOnCooldown):
         await ctx.send(error)
       else:
         await ctx.send(error)
@@ -286,7 +286,7 @@ class GeneralCog(commands.Cog):
     async def userinfo_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
           await ctx.send('```\n$userinfo {member_name}\n          ^^^^^^^^^^^^^\nMissing Required Argument member_name\n```')
-        elif isinstance(error, commands.cooldown):
+        elif isinstance(error, commands.CommandOnCooldown):
           await ctx.send(error)
         else:
           await ctx.send(f'**{error}**')
@@ -337,7 +337,7 @@ class GeneralCog(commands.Cog):
 
     @serverinfo.error
     async def serverinfo_error(self, ctx, error):
-      if isinstance(error, commands.cooldown):
+      if isinstance(error, commands.CommandOnCooldown):
         await ctx.send(error)
 
 
@@ -376,7 +376,7 @@ class GeneralCog(commands.Cog):
 
     @meme.error
     async def meme_error(self, ctx, error):
-      if isinstance(error, commands.cooldown):
+      if isinstance(error, commands.CommandOnCooldown):
         await ctx.send(error)
 
 
@@ -407,7 +407,7 @@ class GeneralCog(commands.Cog):
 
     @dog.error
     async def dog_error(self, ctx, error):
-      if isinstance(error, commands.cooldown):
+      if isinstance(error, commands.CommandOnCooldown):
         await ctx.send(error)
 
 
