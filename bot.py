@@ -6,9 +6,9 @@ import time
 import os
 from discord.ext import commands
 
-command_prefix='$'
+command_prefix='r$'
 
-bot = commands.Bot(command_prefix=(f'{command_prefix}'))
+bot = commands.Bot(command_prefix=(f'{command_prefix}', 'R$'))
 bot.remove_command('help')
 working_directory = os.getcwd()
 
@@ -39,17 +39,31 @@ except Exception as e:
 @bot.event
 async def on_message(message):
 
+    reply_choices = [
+                        "Hi",
+                        "Hi there",
+                        "Hey",
+                        "Hey there",
+                        "Whatsup",
+                        "Waddup",
+                        "Whats going on",
+                        "Hello",
+                        "Hello!",
+                        "Sup",
+                        "Howdy"
+                    ]
+
     message_var = message.content
+
 
     if message.author.bot:
         return
-    elif 'rexbot' in message.content.lower().split() and 'prefix' in message.content.lower().split():
+    elif bot.user in message.mentions and message_var.lower().find('prefix') != -1:
         await message.channel.send(f'My command prefix is `{command_prefix}`, {message.author.mention}')
-    elif 'rexbot' in message.content.lower().split():
-        await message.channel.send(f'Hello {message.author.mention}')
-    elif '<@!732538419787595846>' in message_var.lower().split():
+    elif bot.user in message.mentions and message_var.lower().find('prefix') != -1:
         await message.channel.send(f'My command prefix is `{command_prefix}`, {message.author.mention}')
-
+    elif bot.user in message.mentions or '<@&750309678075871293>' in message_var.lower().split():
+        await message.channel.send(f'{random.choice(reply_choices)}, {message.author.mention}')
     await bot.process_commands(message)
 
 
@@ -58,7 +72,7 @@ async def on_message(message):
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(status=discord.Status.idle, activity=discord.Game('with your lives'))
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game('with your lives'))
     print("+[ONLINE] Rexbot is online")
 
 
@@ -117,7 +131,7 @@ async def ping(ctx):
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        await ctx.send(f"command not found\nPlease use `$help` to see all commands")
+        await ctx.send(f"command not found\nPlease use `r$help` to see all commands")
 
 
 TOKEN = os.getenv("REXBOT_TOKEN")
@@ -130,7 +144,7 @@ if TOKEN is None:
                 bot.run(TOKEN)
             else:
                 print("Token error: Token not found")
-    except:
+    except FileNotFoundError:
         print("File handle error")
 else:
     print('Using token found in Environment variable....')
