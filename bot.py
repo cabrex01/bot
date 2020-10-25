@@ -58,12 +58,37 @@ async def on_message(message):
 
     if message.author.bot:
         return
-    elif bot.user in message.mentions and message_var.lower().find('prefix') != -1:
-        await message.channel.send(f'My command prefix is `{command_prefix}`, {message.author.mention}')
-    elif bot.user in message.mentions and message_var.lower().find('prefix') != -1:
-        await message.channel.send(f'My command prefix is `{command_prefix}`, {message.author.mention}')
-    elif bot.user in message.mentions or '<@&750309678075871293>' in message_var.lower().split():
-        await message.channel.send(f'{random.choice(reply_choices)}, {message.author.mention}')
+    elif (bot.user in message.mentions or (message_var.lower().find('rexbot') != -1 )) and message_var.lower().find('prefix') != -1:
+        await message.channel.send(f'My command prefix is `{command_prefix}`, **{message.author.display_name}**')
+    elif bot.user in message.mentions or '<@&750309678075871293>' in message_var.lower().split() or (message_var.lower().find('rexbot') != -1 or bot.user in message.mentions):
+    	if message_var.lower().find('awesome') != -1 or message_var.lower().find('cool') != -1 or message_var.lower().find('good') != -1 or message_var.lower().find('nice') != -1 :
+    		await message.channel.send(f'Thanks bro 😁')
+    	elif message_var.lower().find('bad') != -1 or message_var.lower().find('horrible') != -1 or message_var.lower().find('suck') != -1 or message_var.lower().find('terrible') != -1 or message_var.lower().find('waste') != -1 or message_var.lower().find('fk') != -1 or message_var.lower().find('fuck') != -1:
+    		await message.channel.send(f'No you\nI do the basic functions okay I aint dyno or mee6\n\nJesus christ.')
+    	elif message_var.lower().find('how are you') != -1 :
+    		await message.channel.send(f'I am fine, {message.author.display_name}')
+    	else:
+        	await message.channel.send(f'{random.choice(reply_choices)}, **{message.author.display_name}**!')
+    if str(message.channel.type) == 'private':
+    	if len(message.content) > 20:
+    		bugs_channel1 = discord.utils.get(bot.get_all_channels(), guild__name='Cyber Experimentation Facility', name='bugs')
+    		bugs_channel2 = discord.utils.get(bot.get_all_channels(), guild__name='ZeroDeaths', name='bugs')
+    		embed = discord.Embed(
+    					title='BUG REPORTED',
+    					colour = 0x008000
+    			)
+    		embed.add_field(name='Username', value=message.author)
+    		embed.add_field(name='User id', value=message.author.id)
+    		embed.add_field(name='Bug: ', value=message.content)
+    		if bugs_channel1 is not None:
+    			await bugs_channel1.send(embed=embed)
+    			await bugs_channel2.send(embed=embed)
+    		elif bugs_channel2 is not None:
+    			await bugs_channel2.send(embed=embed)
+    		await message.channel.send("Your bug has been reported")
+    	else:
+    		await message.channel.send("Please enter your bug in more than 20 words, try describing everything")
+
     await bot.process_commands(message)
 
 
