@@ -898,10 +898,13 @@ class ModerationCog(commands.Cog):
                             embed = discord.Embed(title='**USER ALREADY HAS THE ROLE**', description=f'**{multiple_member_array[0]}** already has the role **{role}**', colour=0xf86000)
                             await ctx.send(embed=embed)
                         else:
-                            await multiple_member_array[0].add_roles(add_role)
-                            embed = discord.Embed(title='**ADDED ROLE**', description=f'**{str(multiple_member_array[0])}** has been given the role **{role}**', colour=0x008000)
-                            await ctx.send(embed=embed)
 
+                            if ctx.guild.me.top_role > add_role:
+                                await multiple_member_array[0].add_roles(add_role)
+                                embed = discord.Embed(title='**ADDED ROLE**', description=f'**{str(multiple_member_array[0])}** has been given the role **{role}**', colour=0x008000)
+                                await ctx.send(embed=embed)
+                            else:
+                                await ctx.send(f"I cannot add a role that has a higher priority than mine, **{ctx.author.mention}**")
                     elif role is None:
                         pass
                     else:
@@ -1011,9 +1014,12 @@ class ModerationCog(commands.Cog):
                                 pass
 
                         if does_have_role:
-                            await multiple_member_array[0].remove_roles(remove_role)
-                            embed = discord.Embed(title='**REMOVED ROLE**', description=f'Removed **{role}** from user **{str(multiple_member_array[0])}**', colour=0x008000)
-                            await ctx.send(embed=embed)
+                            if ctx.guild.me.top_role > remove_role:
+                                await multiple_member_array[0].remove_roles(remove_role)
+                                embed = discord.Embed(title='**REMOVED ROLE**', description=f'Removed **{role}** from user **{str(multiple_member_array[0])}**', colour=0x008000)
+                                await ctx.send(embed=embed)
+                            else:
+                                await ctx.send(f"I cannot remove a role that has a higher priority than mine, **{ctx.author.mention}**")
                         else:
                             embed = discord.Embed(title='**USER DOES NOT HAVE THE ROLE**', description=f'**{multiple_member_array[0]}** does not have the role **{role}**', colour=0xf86000)
                             await ctx.send(embed=embed)
