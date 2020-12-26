@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 import discord
 from discord import Intents
 import random
@@ -23,16 +22,6 @@ bot.remove_command('help')
 working_directory = os.getcwd()
 
 
-# Loading cogs
-
-@bot.command()
-async def load(ctx, extension):
-	bot.load_extension(f"cogs.{extension}")
-
-
-@bot.command()
-async def unload(ctx, extension):
-	bot.unload_extension(f"cogs.{extension}")
 
 try:
 	for filename in os.listdir('./cogs'):
@@ -84,6 +73,7 @@ async def on_message(message):
 		if len(message.content) > 20:
 			bugs_channel1 = discord.utils.get(bot.get_all_channels(), guild__name='Cyber Experimentation Facility', name='bugs')
 			bugs_channel2 = discord.utils.get(bot.get_all_channels(), guild__name='ZeroDeaths', name='bugs')
+			bugs_channel3 = discord.utils.get(bot.get_all_channels(), guild__name='RexBot Support', name='bugs')
 			embed = discord.Embed(
 						title='BUG REPORTED',
 						colour = 0x008000
@@ -94,8 +84,10 @@ async def on_message(message):
 			if bugs_channel1 is not None:
 				await bugs_channel1.send(embed=embed)
 				await bugs_channel2.send(embed=embed)
+				await bugs_channel3.send(embed=embed)
 			elif bugs_channel2 is not None:
 				await bugs_channel2.send(embed=embed)
+				await bugs_channel3.send(embed=embed)
 			await message.channel.send("Your bug has been reported")
 		else:
 			await message.channel.send("Please enter your bug in more than 20 words, try describing everything")
@@ -116,7 +108,11 @@ async def on_ready():
 async def on_member_join(member):
 	try:
 		print(f'+[NEW_MEMBER]    {member} has joined the server: {member.guild.name}')
-		channel = discord.utils.get(member.guild.channels, name='moderation-logs')
+		
+		channel = None
+		if fetch_join_log_channel(int(member.guild.id)) is not None:
+			channel = bot.get_channel(fetch_join_log_channel(int(member.guild.id))["channel_id"])
+
 		if channel is not None:
 			embed = discord.Embed(
 					title = 'Member joined the server',
@@ -138,7 +134,7 @@ async def on_member_join(member):
 		else:
 			pass
 	except Exception as e:
-		print(e)
+		raise Exception
 
 
 
@@ -150,29 +146,61 @@ async def on_member_remove(member):
 
 		delete_warns(member.guild.id, member.id)
 
-		channel = discord.utils.get(member.guild.channels, name='moderation-logs')
+		channel = None
+		if fetch_leave_log_channel(int(member.guild.id)):
+			channel = bot.get_channel(fetch_leave_log_channel(int(member.guild.id))["channel_id"])
+
+
 		if channel is not None:
 			embed = discord.Embed(
 				title = 'Member left the server',
 				description=f'Member **{member.name}** has left the server!',
 				colour=0xFF0000
 			)
-			members = await member.guild.fetch_members().flatten()
+			try:
+				members = await member.guild.fetch_members().flatten()
 
-			bot_count = 0
-			for people in members:
-				if people.bot is True:
-					bot_count += 1
+				bot_count = 0
+				for people in members:
+					if people.bot is True:
+						bot_count += 1
 
-			embed.set_thumbnail(url=member.avatar_url)
-			embed.add_field(name='Number of members', value=len(members) - bot_count)
-			embed.add_field(name='Number of bots', value=bot_count)
-			embed.set_footer(text=f'id: {member.id}')
-			await channel.send(embed=embed)
+				embed.set_thumbnail(url=member.avatar_url)
+				embed.add_field(name='Number of members', value=len(members) - bot_count)
+				embed.add_field(name='Number of bots', value=bot_count)
+				embed.set_footer(text=f'id: {member.id}')
+				await channel.send(embed=embed)
+			except:
+				pass
 		else:
 			pass
 	except Exception as e:
-		print(e)
+		raise Exception
+
+@bot.event
+async def on_guild_channel_delete(channel):
+
+	join_channel = None
+	if fetch_join_log_channel(int(channel.guild.id)) is not None:
+		join_channel = fetch_join_log_channel(int(channel.guild.id))["channel_id"]
+
+		if channel.id == join_channel:
+			delete_join_log_channel(int(channel.guild.id))
+
+	leave_channel = None
+	if fetch_leave_log_channel(int(channel.guild.id)) is not None:
+		leave_channel = fetch_leave_log_channel(int(channel.guild.id))["channel_id"]
+
+		if channel.id == leave_channel:
+			delete_leave_log_channel(int(channel.guild.id))
+
+	log_channel = None
+	if fetch_mod_log_channel(int(channel.guild.id)) is not None:
+		mod_channel = fetch_mod_log_channel(int(channel.guild.id))["channel_id"]
+
+		if channel.id == mod_channel:
+			delete_mod_log_channel(int(channel.guild.id))
+
 
 
 @bot.event
@@ -184,8 +212,68 @@ async def on_guild_join(guild):
 @bot.event
 async def on_guild_remove(guild):
 
-	del_prefix(guild.id)
+	clear_server_data(guild.id)
 
+@bot.event
+async def on_bulk_message_delete(messages):
+
+
+	message_channel = fetch_message_edit_log_channel(int(messages[0].guild.id))
+	if message_channel is not None:
+
+		message_channel = fetch_message_edit_log_channel(int(messages[0].guild.id))["channel_id"]
+		message_channel = bot.get_channel(message_channel)
+
+		embed = discord.Embed(
+				title='Bulk message delete',
+				description=f'{len(messages)} messages deleted in {messages[0].channel.mention}',
+				color=0xff0000
+		)
+
+		if message_channel.id != messages[0].channel.id:
+			await message_channel.send(embed=embed)
+
+@bot.event
+async def on_message_delete(message):
+	
+	message_channel = fetch_message_edit_log_channel(int(message.guild.id))
+	if message_channel is not None:
+
+		message_channel = fetch_message_edit_log_channel(int(message.guild.id))["channel_id"]
+		message_channel = bot.get_channel(message_channel)
+
+		embed = discord.Embed(
+				title='Message deleted',
+				description=f'Message deleted in {message.channel.mention}\nContents:\n```\n{message.content}\n```\n'
+							f'Author of the message:\n{message.author.mention}',
+				color=0xff0000
+		)
+
+		if message_channel.id != message.channel.id:
+			await message_channel.send(embed=embed)
+
+@bot.event
+async def on_message_edit(before, after):
+
+	if not after.author.bot:
+		if before.content != after.content:
+
+			message_channel = fetch_message_edit_log_channel(int(before.guild.id))
+			if message_channel is not None:
+
+				message_channel = fetch_message_edit_log_channel(int(before.guild.id))["channel_id"]
+				message_channel = bot.get_channel(message_channel)
+
+				embed = discord.Embed(
+						title='Message edited',
+						description=f'Message edited in {before.channel.mention}\nbefore:\n```\n{before.content}\n```\n\nAfter:\n```\n{after.content}\n```\n'
+									f'Author of the message:\n{after.author.mention}\n'
+									f'[jump](https://discordapp.com/channels/{after.guild.id}/{after.channel.id}/{after.id}) to the message',
+						color=0xff0000
+				)
+
+				if message_channel.id != before.channel.id:
+					await message_channel.send(embed=embed)
 
 
 # Ping
@@ -217,7 +305,7 @@ try:
 				else:
 					print("Token error: Token not found")
 		except FileNotFoundError:
-			print("File handle error")
+			print("No token file or environment variable\nQuitting")
 	else:
 		print('Using token found in Environment variable....')
 		bot.run(TOKEN)

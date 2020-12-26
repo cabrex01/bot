@@ -13,6 +13,12 @@ from cogs.usefullTools.dbIntegration import *
 
 from googletrans import Translator
 
+from platform import python_version
+import psutil
+from psutil import Process, virtual_memory
+from datetime import datetime, timedelta
+from time import time
+
 
 class GeneralCog(commands.Cog):
 
@@ -30,7 +36,7 @@ class GeneralCog(commands.Cog):
 		if member[0] == '<' and member[1] == '@':
 			converter = MemberConverter()
 			member = await converter.convert(ctx, member)
-		elif member.isnumeric():
+		elif member.isdigit():
 			member = int(member)
 		else:
 			pass
@@ -58,7 +64,7 @@ class GeneralCog(commands.Cog):
 					pass
 
 		if member is discord.Member:
-			if member.isnumeric() and member.lower() == 'me' and override == 'override':
+			if member.isdigit() and member.lower() == 'me' and override == 'override':
 				embed = discord.Embed(colour=0x0000ff)
 				embed.set_image(url=f'{ctx.author.avatar_url}')
 				await ctx.send(embed=embed)
@@ -119,7 +125,7 @@ class GeneralCog(commands.Cog):
 		if member[0] == '<' and member[1] == '@':
 			converter = MemberConverter()
 			member = await converter.convert(ctx, member)
-		elif member.isnumeric():
+		elif member.isdigit():
 			member = int(member)
 
 		members = await ctx.guild.fetch_members().flatten()
@@ -296,7 +302,17 @@ class GeneralCog(commands.Cog):
 	@cooldown(1, 2,BucketType.channel)
 	async def wiki(self, ctx, *, query=None):
 		if query is not None:
-			r = wikipedia.page(query)
+			try:
+				r = wikipedia.page(query)
+			except wikipedia.exceptions.DisambiguationError as e:
+				await ctx.send(f"```\n{e}\n```\nPlease be more accurate with your query")
+				return
+			except wikipedia.exceptions.PageError as e:
+				await ctx.send(e)
+				return
+			except wikipedia.exceptions.HTTPTimeoutError:
+				await ctx.send("Timeout, please try again later")
+				return
 			embed = discord.Embed(
 				title = r.title,
 				description = r.summary[0 : 2000],
@@ -642,6 +658,7 @@ class GeneralCog(commands.Cog):
 		else:
 			await ctx.send(f'An error occured \n```\n{error}\n```\nPlease check console for traceback, or raise an issue to CABREX')
 			raise error
+
 
 def setup(bot):
 	bot.add_cog(GeneralCog(bot))

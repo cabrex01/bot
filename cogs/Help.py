@@ -47,11 +47,12 @@ class HelpCog(commands.Cog):
 							f'**howdoi**\nInformation from stackoverflow\n**Usage:** `{prefix}howdoi <query>`\nQuery is necessary\n\n'
 							f'**cipher | morse**\nConverts your message to morse code\n**Usage:** `{prefix}cypher <message>`\n\n'
 							f'**base64**\nEncodes your message to base64\n**Usage:** `{prefix}base64 "<message>" <iteration>`\nMessage must be in **quotes**\n\n'
-							f'**dbase64**\nDecodes your base64 encoded message\n**Usage:** `{prefix}dbase64 "<message>"`\nMessage must be in **quotes**\n\nUsage'
+							f'**dbase64**\nDecodes your base64 encoded message\n**Usage:** `{prefix}dbase64 "<message>"`\nMessage must be in **quotes**\n\n'
 							f'**qrcode**\nConverts a text to qr code\n**Usage:** `{prefix}qrcode <message>`\n\n'
 							f'**qrdecode**\nDecodes the qr code link provided\n**Usage:** `{prefix}qrdecode <url link>`\n\n'
 							f'**translate**\nTranslates your messag to your desired language\n**Usage:** `{prefix}translate <source_anguage> <destination_language> <text>`\n\n'
-							f'**prefix**\nChanges the prefix of the server\n**Usage:** `{prefix}prefix <prefix>`\n\n',
+							f'**prefix**\nChanges the prefix of the server\n**Usage:** `{prefix}prefix <prefix>`\n\n'
+							f'**botstats**\nShows the bot\'s statistics\n**Usage:** `{prefix}botstats`\n\n',
 				colour=0x01a901
 			)
 		utils_embed.set_footer(text='Made by CABREX with ❤')
@@ -74,9 +75,7 @@ class HelpCog(commands.Cog):
 
 		mod_embed_2 = discord.Embed(
 				title = 'Page 2',
-				description=f'**setwarnthresh | setwarnthreshold**\nSets the warning threshold for the server, beyond which the member gets banned\n**Usage:** `{prefix}setwarnthresh <integer>`\n\n'
-							f'**clearwanthresh(old) | delwarnthresh(old)**\nClears the warning threshold of the server\n**Usage:** `{prefix}clearwarnthresh`\n\n'
-							f'**mute**\nMutes the user\n**Usage:** `{prefix}mute <member_name | member_id | member_tag> <reason>`, reason is not necessary\n\n'
+				description=f'**mute**\nMutes the user\n**Usage:** `{prefix}mute <member_name | member_id | member_tag> <reason>`, reason is not necessary\n\n'
 							f'**unmute**\nUnmutes the user\n**Usage:** `{prefix}unmute <member_name | member_id | member_tag>`\n\n'
 							f'**clear | remove | purge**\nClears messages from the channel where it is used\n**Usage:** `{prefix}clear <n>` where `n` is the number of messages to be purged\n\n'
 							f'**addrole**\nAdds role to member\n**Usage:** `{prefix}addrole <member_name | member_id | member_tag> <role_name>`\n\n'
@@ -84,6 +83,16 @@ class HelpCog(commands.Cog):
 				colour=0x01a901
 			)
 		mod_embed_2.set_footer(text='Made by CABREX with ❤')
+
+		config_embed = discord.Embed(
+				title = 'Configuration commands for @Rexbot',
+				description=f'**setwarnthresh | setwarnthreshold**\nSets the warning threshold for the server, beyond which the member gets banned\n**Usage:** `{prefix}setwarnthresh <integer>`\n\n'
+							f'**clearwanthresh(old) | delwarnthresh(old)**\nClears the warning threshold of the server\n**Usage:** `{prefix}clearwarnthresh`\n\n'
+							f'**serverconfig | config | serversetup | setup**\nConfigures the channels for moderation logging\n**Usage:** `{prefix}config`\n\n'
+							f'**showconfig**\nShows channels that are for logging\n**Usage:** `{prefix}showconfig <args>`\nArgs can be optional (type `help` to get a list)\n\n',
+				colour=0x01a901
+			)
+		config_embed.set_footer(text='Made by CABREX with ❤')
 
 		support_embed = discord.Embed(
 				title = 'Support commands for @Rexbot',
@@ -93,13 +102,14 @@ class HelpCog(commands.Cog):
 							f'**supportserver | ss**\nLink to the support server\n**Usage:** `{prefix}ss`\n\n',
 				colour=0x01a901
 			)
-		support_embed.set_footer(text='Made by CABREX with ❤')        
+		support_embed.set_footer(text='Made by CABREX with ❤')
 
 		initial_help_dialogue = discord.Embed(
 				title = 'Help command',
 				description=f'`{prefix}help Fun`\nFun commands\n\n'
 							f'`{prefix}help Moderation` | `{prefix}help mod`\nModeration commands\n\n'
 							f'`{prefix}help utils` | `{prefix}help util`\nUtility commands\n\n'
+							f'`{prefix}help config`\nConfiguration commands\n\n'
 							f'`{prefix}help support`\nSupport commands\n\n',
 				colour=0x01a901
 			)
@@ -122,6 +132,8 @@ class HelpCog(commands.Cog):
 			await ctx.send(embed=utils_embed)
 		elif argument.lower() == 'support':
 			await ctx.send(embed=support_embed)
+		elif argument.lower() == 'config':
+			await ctx.send(embed=config_embed)
 		else:
 		  pass
 
