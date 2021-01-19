@@ -71,9 +71,9 @@ async def on_message(message):
 			await message.channel.send(f'{random.choice(reply_choices)}, **{message.author.display_name}**!')
 	if str(message.channel.type) == 'private':
 		if len(message.content) > 20:
-			bugs_channel1 = discord.utils.get(bot.get_all_channels(), guild__name='Cyber Experimentation Facility', name='bugs')
-			bugs_channel2 = discord.utils.get(bot.get_all_channels(), guild__name='ZeroDeaths', name='bugs')
-			bugs_channel3 = discord.utils.get(bot.get_all_channels(), guild__name='RexBot Support', name='bugs')
+			bugs_channel1 = bot.get_channel(769510637486997514)
+			bugs_channel2 = bot.get_channel(769490617771884565)
+			bugs_channel3 = bot.get_channel(782252610874638347)
 			embed = discord.Embed(
 						title='BUG REPORTED',
 						colour = 0x008000
